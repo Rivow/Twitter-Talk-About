@@ -1,6 +1,7 @@
 import streamlit as st
 from datetime import datetime
 from datetime import timedelta
+import pandas as pd
 import gensim
 from gensim import corpora, models
 from gensim.utils import simple_preprocess
@@ -9,7 +10,6 @@ import nltk
 from nltk.stem import WordNetLemmatizer, SnowballStemmer
 from nltk.stem.porter import *
 import numpy as np
-import pandas as pd
 import twint
 
 
