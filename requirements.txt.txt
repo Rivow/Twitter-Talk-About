@@ -1,0 +1,4 @@
+pandas==1.4.3
+nltk==3.7
+gensim==4.2.0
+twint==2.1.20
