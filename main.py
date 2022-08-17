@@ -46,6 +46,7 @@ def get_tweets(topic, date):
 
 def prepare_tweets(df):
     df['tweet'] = df['tweet'].apply(lambda x: re.sub(r'http\S+', '', x))
+    nltk.download('omw-1.4')
     nltk.download('wordnet')
     processed = df['tweet'].map(preprocess)
     return processed
