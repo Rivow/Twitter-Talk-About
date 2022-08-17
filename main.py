@@ -84,7 +84,7 @@ def topic_model(processed):
     corpus_tfidf = tfidf[bow_corpus]
 
     # LDA modeling
-    lda_model = gensim.models.LdaMulticore(corpus_tfidf,
+    lda_model = gensim.models.LdaModel(corpus_tfidf,
                                           num_topics=3,
                                           id2word=dictionary,
                                           passes=2)
