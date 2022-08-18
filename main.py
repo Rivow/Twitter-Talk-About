@@ -53,9 +53,9 @@ def get_tweets(date):
         c.Hide_output = True
         twint.run.Search(c)
         df = twint.storage.panda.Tweets_df
-        df = df[df['language'] =='en']
-        df['date'] = df.date.apply(lambda x: x.split(' ')[0])
-        df = df[df['date'] == str(date)]
+        #df = df[df['language'] =='en']
+        #df['date'] = df.date.apply(lambda x: x.split(' ')[0])
+        #df = df[df['date'] == str(date)]
         return df
 
     except Exception:
