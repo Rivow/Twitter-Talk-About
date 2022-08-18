@@ -15,21 +15,21 @@ import twint
 
 def submit():
     """This method is called when the button is clicked To apply the functions and get the output"""
-    if st.session_state.topic == '':
-        return
-    day = datetime.combine(st.session_state.date_select, datetime.min.time())
-    print(day)
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        times = [day + timedelta(minutes=h * 30) for h in range(48)]
-        results = executor.map(get_tweets, times)
+    #if st.session_state.topic == '':
+    #    return
+    #day = datetime.combine(st.session_state.date_select, datetime.min.time())
+    #print(day)
+    #with concurrent.futures.ThreadPoolExecutor() as executor:
+    #    times = [day + timedelta(minutes=h * 30) for h in range(48)]
+    #    results = executor.map(get_tweets, times)
 
-    tweets = next(results)
-    for r in results:
-        tweets = pd.concat([tweets, r])
-    tweets.drop_duplicates(subset=['id', 'tweet'], inplace=True)
+    #tweets = next(results)
+    #for r in results:
+    #    tweets = pd.concat([tweets, r])
+    #tweets.drop_duplicates(subset=['id', 'tweet'], inplace=True)
 
-    #tweets = get_tweets(day)
-
+    tweets = get_tweets(day)
+    print(tweets.shape)
     if not tweets.empty:
         processed = prepare_tweets(tweets)
         lda_model = topic_model(processed)
