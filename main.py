@@ -1,3 +1,4 @@
+import concurrent.futures
 import streamlit as st
 from datetime import datetime
 from datetime import timedelta
@@ -9,13 +10,26 @@ from gensim.parsing.preprocessing import STOPWORDS
 import nltk
 from nltk.stem import WordNetLemmatizer, SnowballStemmer
 from nltk.stem.porter import *
-import numpy as np
 import twint
 
 
 def submit():
     """This method is called when the button is clicked To apply the functions and get the output"""
-    tweets = get_tweets(st.session_state.topic, st.session_state.date_select)
+    if st.session_state.topic == '':
+        return
+    day = datetime.combine(st.session_state.date_select, datetime.min.time())
+    print(day)
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        times = [day + timedelta(minutes=h * 30) for h in range(48)]
+        results = executor.map(get_tweets, times)
+
+    tweets = next(results)
+    for r in results:
+        tweets = pd.concat([tweets, r])
+    tweets.drop_duplicates(subset=['id', 'tweet'], inplace=True)
+
+    #tweets = get_tweets(day)
+
     if not tweets.empty:
         processed = prepare_tweets(tweets)
         lda_model = topic_model(processed)
@@ -25,23 +39,27 @@ def submit():
         return topics
 
 
-def get_tweets(topic, date):
-    if not topic:
-        return pd.DataFrame()
-    next_day = date + timedelta(days=2)
-    c = twint.Config()
-    c.Search = topic
-    c.Limit = 5000
-    c.Since = str(date)
-    c.Until = str(next_day)
-    c.Pandas = True
-    c.Hide_output = True
-    twint.run.Search(c)
-    df = twint.storage.panda.Tweets_df
-    df = df[df['language'] =='en']
-    df['date'] = df.date.apply(lambda x: x.split(' ')[0])
-    df = df[df['date'] == str(date)]
-    return df
+def get_tweets(date):
+    try:
+        if not topic:
+            return pd.DataFrame()
+        next_day = date + timedelta(minutes=30)
+        c = twint.Config()
+        c.Search = topic
+        c.Limit = 100
+        c.Since = str(date)
+        c.Until = str(next_day)
+        c.Pandas = True
+        c.Hide_output = True
+        twint.run.Search(c)
+        df = twint.storage.panda.Tweets_df
+        df = df[df['language'] =='en']
+        df['date'] = df.date.apply(lambda x: x.split(' ')[0])
+        df = df[df['date'] == str(date)]
+        return df
+
+    except Exception:
+        pass
 
 
 def prepare_tweets(df):
@@ -108,6 +126,7 @@ if __name__ == '__main__':
     min_date = datetime.strptime('2006-07-15', '%Y-%m-%d')
     max_date = datetime.today().date()
     st.text_input('Input Topic', key='topic')
+    topic = st.session_state.topic
     st.date_input('Input Date', key='date_select', min_value=min_date, max_value=max_date)
     st.button('Submit', key='submit', on_click=submit())
 
