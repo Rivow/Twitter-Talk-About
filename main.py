@@ -42,11 +42,11 @@ def submit():
 
 def get_tweets(date):
     try:
-        print(date)
+        print(date, 'date')
         if not topic:
             return pd.DataFrame()
         next_day = date + timedelta(minutes=30)
-        print(next_day)
+        print(next_day, 'next-day')
 
         c = twint.Config()
         c.Search = topic
