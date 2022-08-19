@@ -29,7 +29,8 @@ def submit():
     #tweets.drop_duplicates(subset=['id', 'tweet'], inplace=True)
 
     tweets = get_tweets(day)
-
+    print(tweets.shape)
+    print(min(tweets.date), max(tweets.date))
     if not tweets.empty:
         processed = prepare_tweets(tweets)
         lda_model = topic_model(processed)
@@ -41,11 +42,11 @@ def submit():
 
 def get_tweets(date):
     try:
-        st.tiltle(f'{date} day')
+        print(date, 'today')
         if not topic:
             return pd.DataFrame()
         next_day = date + timedelta(minutes=30)
-        st.tiltle(f'{next_day} next-day')
+        print(next_day, 'next')
 
         c = twint.Config()
         c.Search = topic
@@ -63,6 +64,7 @@ def get_tweets(date):
         #df = df[df['date'] == str(date)]
 
     except Exception:
+        print('hi')
         pass
 
 
@@ -133,3 +135,4 @@ if __name__ == '__main__':
     topic = st.session_state.topic
     st.date_input('Input Date', key='date_select', min_value=min_date, max_value=max_date)
     st.button('Submit', key='submit', on_click=submit())
+
