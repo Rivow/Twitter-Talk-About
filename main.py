@@ -29,9 +29,6 @@ def submit():
     #tweets.drop_duplicates(subset=['id', 'tweet'], inplace=True)
 
     tweets = get_tweets(day)
-    print(tweets.shape)
-    min(tweets.date)
-    max(tweets.date)
 
     if not tweets.empty:
         processed = prepare_tweets(tweets)
@@ -44,10 +41,11 @@ def submit():
 
 def get_tweets(date):
     try:
+        st.tiltle(f'{date} day')
         if not topic:
             return pd.DataFrame()
         next_day = date + timedelta(minutes=30)
-        print(next_day, 'next-day')
+        st.tiltle(f'{next_day} next-day')
 
         c = twint.Config()
         c.Search = topic
