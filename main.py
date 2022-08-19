@@ -18,7 +18,7 @@ def submit():
     if st.session_state.topic == '':
         return
     day = datetime.combine(st.session_state.date_select, datetime.min.time())
-    
+
     with concurrent.futures.ThreadPoolExecutor() as executor:
         times = [day + timedelta(minutes=h * 30) for h in range(48)]
         results = executor.map(get_tweets, times)
@@ -31,6 +31,7 @@ def submit():
     #tweets = get_tweets(day)
 
     if not tweets.empty:
+        tweets.info()
         processed = prepare_tweets(tweets)
         lda_model = topic_model(processed)
         topics = clean_topics(lda_model)
