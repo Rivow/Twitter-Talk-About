@@ -18,19 +18,18 @@ def submit():
     if st.session_state.topic == '':
         return
     day = datetime.combine(st.session_state.date_select, datetime.min.time())
-    #print(type(day))
-    #with concurrent.futures.ThreadPoolExecutor() as executor:
-    #    times = [day + timedelta(minutes=h * 30) for h in range(48)]
-    #    results = executor.map(get_tweets, times)
+    
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        times = [day + timedelta(minutes=h * 30) for h in range(48)]
+        results = executor.map(get_tweets, times)
 
-    #tweets = pd.DataFrame()
-    #for r in results:
-    #    tweets = pd.concat([tweets, r])
-    #tweets.drop_duplicates(subset=['id', 'tweet'], inplace=True)
+    tweets = pd.DataFrame()
+    for r in results:
+        tweets = pd.concat([tweets, r])
+    tweets.drop_duplicates(subset=['id', 'tweet'], inplace=True)
 
-    tweets = get_tweets(day)
-    print(tweets.shape)
-    print(min(tweets.date), max(tweets.date))
+    #tweets = get_tweets(day)
+
     if not tweets.empty:
         processed = prepare_tweets(tweets)
         lda_model = topic_model(processed)
