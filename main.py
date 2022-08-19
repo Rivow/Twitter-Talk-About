@@ -18,18 +18,19 @@ def submit():
     if st.session_state.topic == '':
         return
     day = datetime.combine(st.session_state.date_select, datetime.min.time())
-    #print(day)
+    #print(type(day))
     #with concurrent.futures.ThreadPoolExecutor() as executor:
     #    times = [day + timedelta(minutes=h * 30) for h in range(48)]
     #    results = executor.map(get_tweets, times)
 
-    #tweets = next(results)
+    #tweets = pd.DataFrame()
     #for r in results:
     #    tweets = pd.concat([tweets, r])
     #tweets.drop_duplicates(subset=['id', 'tweet'], inplace=True)
 
     tweets = get_tweets(day)
     print(tweets.shape)
+    print(min(tweets.date), max(tweets.date))
     if not tweets.empty:
         processed = prepare_tweets(tweets)
         lda_model = topic_model(processed)
@@ -41,24 +42,29 @@ def submit():
 
 def get_tweets(date):
     try:
+        print(date)
         if not topic:
             return pd.DataFrame()
         next_day = date + timedelta(minutes=30)
+        print(next_day)
+
         c = twint.Config()
         c.Search = topic
         c.Limit = 100
         c.Since = str(date)
         c.Until = str(next_day)
         c.Pandas = True
+        c.Debug = True
         c.Hide_output = True
         twint.run.Search(c)
         df = twint.storage.panda.Tweets_df
+        return df
         #df = df[df['language'] =='en']
         #df['date'] = df.date.apply(lambda x: x.split(' ')[0])
         #df = df[df['date'] == str(date)]
-        return df
 
     except Exception:
+        print('hi')
         pass
 
 
@@ -129,4 +135,3 @@ if __name__ == '__main__':
     topic = st.session_state.topic
     st.date_input('Input Date', key='date_select', min_value=min_date, max_value=max_date)
     st.button('Submit', key='submit', on_click=submit())
-
