@@ -13,12 +13,6 @@ from nltk.stem.porter import *
 import twint
 
 
-@contextmanager
-def st_stdout(dst):
-    with st_redirect(sys.stdout, dst):
-        yield
-
-
 def submit():
     """This method is called when the button is clicked To apply the functions and get the output"""
     if st.session_state.topic == '':
@@ -49,16 +43,14 @@ def submit():
 def get_tweets(date):
     try:
         with st_stdout("code"):
-            print(date, 'today')
+            print("Prints as st.code()")
 
         with st_stdout("info"):
-            print('')
+            print("Prints as st.info()")
         if not topic:
             return pd.DataFrame()
         next_day = date + timedelta(minutes=30)
-        
-        with st_stdout("info"):
-            print(next_day, 'next-day')
+        print(next_day, 'next-day')
 
         c = twint.Config()
         c.Search = topic
@@ -81,6 +73,7 @@ def get_tweets(date):
 
 
 def prepare_tweets(df):
+    print('hi')
     df['tweet'] = df['tweet'].apply(lambda x: re.sub(r'http\S+', '', x))
     nltk.download('omw-1.4')
     nltk.download('wordnet')
