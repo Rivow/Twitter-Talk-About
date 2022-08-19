@@ -31,6 +31,7 @@ def submit():
     #tweets = get_tweets(day)
 
     if not tweets.empty:
+        tweets.reset_index(inplace=True)
         tweets
         processed = prepare_tweets(tweets)
         lda_model = topic_model(processed)
