@@ -30,7 +30,9 @@ def submit():
 
     tweets = get_tweets(day)
     print(tweets.shape)
-    print(min(tweets.date), max(tweets.date))
+    min(tweets.date)
+    max(tweets.date)
+
     if not tweets.empty:
         processed = prepare_tweets(tweets)
         lda_model = topic_model(processed)
@@ -42,11 +44,6 @@ def submit():
 
 def get_tweets(date):
     try:
-        with st_stdout("code"):
-            print("Prints as st.code()")
-
-        with st_stdout("info"):
-            print("Prints as st.info()")
         if not topic:
             return pd.DataFrame()
         next_day = date + timedelta(minutes=30)
@@ -68,12 +65,10 @@ def get_tweets(date):
         #df = df[df['date'] == str(date)]
 
     except Exception:
-        print('hi')
         pass
 
 
 def prepare_tweets(df):
-    print('hi')
     df['tweet'] = df['tweet'].apply(lambda x: re.sub(r'http\S+', '', x))
     nltk.download('omw-1.4')
     nltk.download('wordnet')
