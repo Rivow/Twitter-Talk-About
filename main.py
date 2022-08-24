@@ -49,7 +49,7 @@ def get_tweets(date):
 
         c = twint.Config()
         c.Search = topic
-        c.Limit = 100
+        c.Limit = 50
         c.Since = str(date)
         c.Until = str(next_day)
         c.Pandas = True
@@ -67,10 +67,16 @@ def get_tweets(date):
 
 def prepare_tweets(df):
     df['tweet'] = df['tweet'].apply(lambda x: re.sub(r'http\S+', '', x))
-    nltk.download('omw-1.4')
-    nltk.download('wordnet')
+#    nltk.download('omw-1.4')
+#    nltk.download('wordnet')
     processed = df['tweet'].map(preprocess)
     return processed
+
+
+@st.cache(suppress_st_warning=True)
+def dependecy_downloader():
+    nltk.download('omw-1.4')
+    nltk.download('wordnet')
 
 
 def lemmatize_stemming(text):
@@ -126,6 +132,7 @@ def clean_topics(model):
 
 
 if __name__ == '__main__':
+    dependecy_downloader()
     min_date = datetime.strptime('2006-07-15', '%Y-%m-%d')
     max_date = datetime.today().date()
     st.text_input('Input Topic', key='topic')
